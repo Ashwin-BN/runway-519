@@ -99,11 +99,7 @@ export default function AdminPage() {
       return;
 
     }
-
-
-
     fetchUsers();
-
   }, [router, fetchUsers]);
 
 
@@ -173,19 +169,8 @@ export default function AdminPage() {
 
 
   return (
-
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-
       <Navbar currentPage="admin" />
-
-      
-
-      {/* Main Content */}
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-      <Navbar currentPage="admin" />
-      
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
@@ -547,7 +532,5 @@ export default function AdminPage() {
       </main>
 
     </div>
-
   );
-
 }
