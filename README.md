@@ -1,357 +1,286 @@
-# Runway Inventory Management System
+﻿# Runway Inventory Management System
 
-A comprehensive full-stack inventory management solution designed for fashion retail operations. Built with modern web technologies to streamline item tracking, user management, and inventory control for runway fashion businesses.
+A full-stack inventory management platform for fashion retail, built with Next.js, Firebase Auth, Express, MongoDB, and Cloudinary.
 
-## 📋 Table of Contents
+## Contents
 
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Prerequisites](#-prerequisites)
-- [Installation](#-installation)
-- [Environment Setup](#-environment-setup)
-- [Usage](#-usage)
-- [API Documentation](#-api-documentation)
-- [Project Structure](#-project-structure)
-- [Database Schema](#-database-schema)
-- [Authentication](#-authentication)
-- [Deployment](#-deployment)
-- [Contributing](#-contributing)
-- [Documentation](#-documentation)
-- [License](#-license)
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Architecture](#project-architecture)
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+- [Environment Configuration](#environment-configuration)
+- [Running Locally](#running-locally)
+- [Production Build](#production-build)
+- [API Reference](#api-reference)
+- [Authentication & Authorization](#authentication--authorization)
+- [Data Models](#data-models)
+- [Deployment Notes](#deployment-notes)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
 
-## ✨ Features
+## Overview
 
-### 🏪 Inventory Management
-- **Item Creation**: Add new fashion items with detailed specifications
-- **Image Upload**: Support for multiple product images with Cloudinary integration
-- **Camera Integration**: Direct camera capture for mobile devices
-- **Advanced Search**: Multi-criteria filtering (brand, department, style, price range)
-- **Real-time Updates**: Live inventory status tracking
+Runway Inventory is a fashion inventory management application that helps store managers, stylists, and administrators track product stock, pricing, sale markdowns, and item status.
 
-### 👥 User Management
-- **Role-based Access**: User, Management, and Admin permissions
-- **Firebase Authentication**: Secure user authentication and authorization
-- **User Profiles**: Role-based dashboard access
+The system is split into two main parts:
 
-### 🔍 Search & Filtering
-- **Case-insensitive Search**: Brand and style number search with partial matching
-- **Price Range Filtering**: Min/max price filtering
-- **Department Filtering**: Category-based organization
-- **Markdown Items**: Special filtering for discounted items
+- `client/` — a responsive Next.js frontend with item creation, search, and role-aware UI.
+- `server/` — an Express API backend with MongoDB data storage, Firebase authentication, and Cloudinary image upload.
 
-### 📊 Admin Features
-- **User Role Management**: Promote/demote users to Management or Admin status
-- **Inventory Oversight**: Full access to all inventory items
-- **Status Management**: Mark items as sold or available
-- **Markdown Pricing**: Set discounted prices (Management & Admin only)
+## Features
 
-## 🛠 Tech Stack
+- Add items with brand, price, department, category, style number, count, and images.
+- Upload product photos via file picker or mobile camera.
+- Search and filter inventory by brand, department, category, style number, price, and markdown status.
+- Role-based access control for regular users, management, and admin.
+- Admin and management can set markdown pricing and mark items as sold.
+- Responsive UI optimized for mobile and desktop.
 
-### Frontend
-- **Framework**: Next.js 16.2.3 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS 4.0
-- **Authentication**: Firebase Authentication
-- **State Management**: React Hooks
+## Tech Stack
 
-### Backend
-- **Runtime**: Node.js with ES6 modules
-- **Framework**: Express.js 5.2.1
-- **Database**: MongoDB with Mongoose ODM
-- **Authentication**: Firebase Admin SDK
-- **File Upload**: Multer with Cloudinary integration
+- Frontend: Next.js 16, React 19, Tailwind CSS 4, Firebase Auth
+- Backend: Node.js, Express 5, MongoDB, Mongoose, Firebase Admin SDK, Cloudinary, Multer
+- Deployment-ready: Vercel / Netlify frontend, Railway / Render / Heroku backend
 
-### Infrastructure
-- **Database**: MongoDB Atlas
-- **Image Storage**: Cloudinary
-- **Authentication**: Firebase
-- **Deployment**: Ready for Vercel/Netlify (frontend) and Railway/Render (backend)
+## Project Architecture
 
-## 📋 Prerequisites
+This repository is organized as a monorepo with separate frontend and backend packages:
 
-Before running this application, ensure you have the following installed:
+- `client/` contains the Next.js web application.
+- `server/` contains the Express API server.
 
-- **Node.js** (v18 or higher)
-- **npm** or **yarn** package manager
-- **MongoDB Atlas** account and cluster
-- **Firebase** project with Authentication enabled
-- **Cloudinary** account for image storage
+Both sides share a clean, maintainable structure and use RESTful communication.
 
-## 🚀 Installation
+## Prerequisites
 
-### 1. Clone the Repository
+Install these tools before getting started:
+
+- Node.js 18 or newer
+- npm (comes with Node.js)
+- MongoDB Atlas or self-hosted MongoDB
+- Firebase project with Authentication enabled
+- Cloudinary account for image management
+
+## Getting Started
+
+### Clone the repository
+
 ```bash
-git clone https://github.com/your-username/runway-inventory.git
-cd runway-inventory
+git clone https://github.com/your-username/runway-519.git
+cd runway-519
 ```
 
-### 2. Install Dependencies
+### Install dependencies
 
-#### Frontend Setup
 ```bash
 cd client
 npm install
-```
-
-#### Backend Setup
-```bash
 cd ../server
 npm install
 ```
 
-### 3. Environment Configuration
-See [Environment Setup](#-environment-setup) section below.
+## Environment Configuration
 
-### 4. Start Development Servers
+### Backend environment (`server/.env`)
 
-#### Terminal 1: Backend Server
-```bash
-cd server
-node index.js
-```
-Server will run on `http://localhost:5000`
-
-#### Terminal 2: Frontend Client
-```bash
-cd client
-npm run dev
-```
-Client will run on `http://localhost:3000`
-
-## 🔧 Environment Setup
-
-### Backend Environment Variables (.env)
-Create a `.env` file in the `server/` directory:
+Create `server/.env` with the following values:
 
 ```env
-# MongoDB Configuration
-MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/runway_inventory
-
-# Firebase Admin Configuration
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/runway_inventory?retryWrites=true&w=majority
 FIREBASE_PROJECT_ID=your-project-id
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY\n-----END PRIVATE KEY-----"
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY\n-----END PRIVATE KEY-----\n"
 FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your-project.iam.gserviceaccount.com
-
-# Cloudinary Configuration
 CLOUDINARY_CLOUD_NAME=your-cloud-name
-CLOUDINARY_API_KEY=your-api-key
-CLOUDINARY_API_SECRET=your-api-secret
-
-# JWT Secret (optional, for custom tokens)
-JWT_SECRET=your-jwt-secret-key
+CLOUDINARY_API_KEY=your-cloudinary-api-key
+CLOUDINARY_API_SECRET=your-cloudinary-api-secret
+JWT_SECRET=your-jwt-secret
 ```
 
-### Frontend Environment Variables (.env.local)
-Create a `.env.local` file in the `client/` directory:
+> Keep `FIREBASE_PRIVATE_KEY` quoted and preserve newline escapes (`\n`) exactly.
+
+### Frontend environment (`client/.env.local`)
+
+Create `client/.env.local` with your Firebase client configuration:
 
 ```env
-# Firebase Client Configuration
 NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
-NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789:web:abcdef123456
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=1234567890
+NEXT_PUBLIC_FIREBASE_APP_ID=1:1234567890:web:abcdef123456
+NEXT_PUBLIC_API_URL=http://localhost:5000
 ```
 
-## 📖 Usage
+## Running Locally
 
-### User Registration & Login
-1. Navigate to `http://localhost:3000/login`
-2. Register a new account or login with existing credentials
-3. Upon successful authentication, you'll be redirected to the dashboard
+Open two terminal windows or tabs.
 
-### Adding Inventory Items
-1. From the dashboard, click "Add New Item"
-2. Fill in item details:
-   - Brand name
-   - Price
-   - Department (2-digit code)
-   - Category (4-digit code)
-   - Style Number (6-digit code)
-3. Upload images using camera or file picker
-4. Submit the form to add the item to inventory
+### Start server
 
-### Searching Inventory
-1. Navigate to the Search page
-2. Use filters to find specific items:
-   - **Brand**: Case-insensitive partial matching
-   - **Department**: Exact department code
-   - **Style Number**: Partial style number matching
-   - **Price Range**: Min/max price filtering
-   - **Markdown Only**: Show only discounted items
-3. Click "Search" to filter results
-
-### Admin Functions
-1. Login with an admin account
-2. Access the Admin panel to manage user roles
-3. Mark items as sold from the inventory list
-
-## 📚 API Documentation
-
-### Authentication Endpoints
-```
-POST /auth/register - User registration
-POST /auth/login - User login
-GET /auth/verify - Verify JWT token
+```bash
+cd server
+npm start
 ```
 
-### Item Management Endpoints
-```
-GET /items - Get filtered items (authenticated)
-POST /items - Create new item (authenticated, file upload)
-PUT /items/:id/sold - Mark item as sold (authenticated)
-PUT /items/:id/markdown - Set markdown price (admin only)
-```
+Server defaults to `http://localhost:5000`.
 
-### Admin Endpoints
-```
-GET /admin/users - Get all users (admin only)
-PUT /admin/users/:id/role - Update user role (admin only)
+### Start frontend
+
+```bash
+cd client
+npm run dev
 ```
 
-### Query Parameters for Item Search
-- `brand`: Case-insensitive regex search
-- `styleNumber`: Case-insensitive regex search
-- `department`: Exact department match
-- `priceMin`: Minimum price filter
-- `priceMax`: Maximum price filter
-- `markdown`: Set to "true" for markdown items only
-- `limit`: Limit number of results
+Frontend is available at `http://localhost:3000`.
 
-## 📁 Project Structure
+## Production Build
 
-```
-runway-inventory/
-├── client/                          # Next.js Frontend
-│   ├── app/
-│   │   ├── admin/                   # Admin pages
-│   │   ├── components/              # React components
-│   │   │   ├── AddItemForm.js       # Item creation form
-│   │   │   └── SearchItems.js       # Search interface
-│   │   ├── login/                   # Authentication page
-│   │   ├── search/                  # Search page
-│   │   ├── globals.css              # Global styles
-│   │   ├── layout.tsx               # Root layout
-│   │   └── page.js                  # Dashboard
-│   ├── lib/
-│   │   └── firebase.js              # Firebase configuration
-│   ├── public/                      # Static assets
-│   └── package.json
-├── server/                          # Express.js Backend
-│   ├── config/
-│   │   └── cloudinary.js            # Cloudinary configuration
-│   ├── middleware/
-│   │   ├── admin.js                 # Admin role middleware
-│   │   └── auth.js                  # Authentication middleware
-│   ├── models/
-│   │   ├── Item.js                  # Item data model
-│   │   └── User.js                  # User data model
-│   ├── routes/
-│   │   ├── admin.js                 # Admin routes
-│   │   ├── auth.js                  # Authentication routes
-│   │   └── items.js                 # Item CRUD routes
-│   ├── uploads/                     # Temporary file uploads
-│   ├── firebase-admin.json          # Firebase service account
-│   ├── index.js                     # Server entry point
-│   └── package.json
-├── .gitignore                       # Git ignore rules
-└── README.md                        # Project documentation
+### Frontend
+
+```bash
+cd client
+npm run build
+npm start
 ```
 
-## 🗄 Database Schema
+### Backend
 
-### Item Model
-```javascript
-{
-  brand: String (required),
-  price: Number (required),
-  department: String (required),     // 2-digit code
-  category: String (required),       // 4-digit code
-  styleNumber: String (required),    // 6-digit code
-  imageUrl: String,                  // Primary image URL
-  imageUrls: [String],               // Array of image URLs
-  status: String (enum: ['available', 'sold'], default: 'available'),
-  markdownPrice: Number,             // Optional markdown price
-  createdAt: Date (default: now)
-}
+```bash
+cd server
+npm start
 ```
 
-### User Model
-```javascript
-{
-  email: String (required, unique),
-  role: String (enum: ['user', 'management', 'admin'], default: 'user'),
-  createdAt: Date (default: now)
-}
+For production deployments, use a process manager such as `pm2` or containerize the backend.
+
+## API Reference
+
+### Authentication
+
+- `POST /auth/register` — register a user
+- `POST /auth/login` — login and receive auth token
+- `GET /auth/verify` — verify Firebase token
+
+### Item management
+
+- `GET /items` — fetch items with filters
+- `POST /items` — create item with image upload
+- `PUT /items/:id/sold` — mark item sold
+- `PUT /items/:id/markdown` — set markdown price (admin/management)
+
+### Admin routes
+
+- `GET /admin/users` — list users
+- `PUT /admin/users/:id/role` — update user role
+
+### Item query parameters
+
+- `brand` — partial brand match
+- `styleNumber` — partial style number match
+- `department` — exact 2-digit department code
+- `priceMin` — minimum price
+- `priceMax` — maximum price
+- `markdown=true` — filter markdown items
+- `limit` — maximum results count
+
+## Authentication & Authorization
+
+This project uses Firebase for authentication and role-based authorization.
+
+- `user` — basic user access
+- `management` — item editing and markdown control
+- `admin` — full management and user control
+
+Protected routes require a valid Firebase JWT token.
+
+## Data Models
+
+### Item
+
+- `brand` — string
+- `price` — number
+- `count` — number (default `1`)
+- `department` — string (2 digits)
+- `category` — string (4 digits)
+- `styleNumber` — string (6 digits)
+- `imageUrl` — string
+- `imageUrls` — array of strings
+- `status` — `available` | `sold`
+- `markdownPrice` — number | null
+- `createdAt` — timestamp
+
+### User
+
+- `email` — string
+- `role` — `user` | `management` | `admin`
+- `createdAt` — timestamp
+
+## Deployment Notes
+
+### Frontend
+
+- Deploy the `client/` app to Vercel or Netlify
+- Set environment variables in the hosting dashboard
+- Ensure `NEXT_PUBLIC_API_URL` points to the backend URL
+
+### Backend
+
+- Deploy `server/` to Render, Railway, Heroku, or a VPS
+- Set MongoDB, Firebase, and Cloudinary environment variables
+- Use HTTPS and secure headers in production
+
+## Project Structure
+
+```
+runway-519/
+├── client/                  # Next.js frontend
+│   ├── app/                 # Pages and components
+│   ├── components/          # Shared components
+│   ├── lib/                 # Firebase setup
+│   ├── public/              # Static assets
+│   ├── package.json
+│   └── README.md
+├── server/                  # Express backend
+│   ├── config/              # Cloudinary and environment config
+│   ├── middleware/          # Auth and role middleware
+│   ├── models/              # Mongoose schemas
+│   ├── routes/              # API routes
+│   ├── uploads/             # Temporary file storage
+│   ├── index.js
+│   ├── package.json
+│   └── README.md
+└── README.md
 ```
 
-## 🔐 Authentication
-
-The application uses Firebase Authentication with custom claims for role-based access control:
-
-- **Regular Users**: Can view available items, add new items, search inventory, mark items as sold
-- **Management Users**: All user permissions plus markdown pricing capabilities
-- **Admin Users**: Full access including user management and all item operations
-
-JWT tokens are issued by Firebase and verified on the backend using Firebase Admin SDK.
-
-## 🚀 Deployment
-
-### Frontend Deployment (Vercel)
-1. Connect your GitHub repository to Vercel
-2. Set environment variables in Vercel dashboard
-3. Deploy automatically on push to main branch
-
-### Backend Deployment (Railway/Render)
-1. Create a new service on Railway or Render
-2. Connect your GitHub repository
-3. Set environment variables
-4. Configure build and start commands
-5. Deploy
-
-### Environment Variables for Production
-Ensure all production environment variables are set in your deployment platform's dashboard.
-
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Commit clearly and write meaningful messages
+4. Open a pull request with a description of your changes
 
-### Development Guidelines
-- Follow ESLint configuration for code style
-- Write descriptive commit messages
-- Test API endpoints thoroughly
-- Update documentation for new features
+### Recommended workflow
 
-## � Documentation
+```bash
+git checkout -b feature/new-ui
+git add .
+git commit -m "Add count field to AddItemForm"
+git push origin feature/new-ui
+```
 
-### Project Documentation
-- **[API Reference](docs/API_REFERENCE.md)** - Complete API endpoint documentation
-- **[Deployment Guide](docs/DEPLOYMENT.md)** - Step-by-step deployment instructions
-- **[Contributing Guide](docs/CONTRIBUTING.md)** - Development and contribution guidelines
+## Troubleshooting
 
-### Component Documentation
-- **[Frontend Client](client/README.md)** - Next.js client documentation
-- **[Backend API](server/README.md)** - Express.js server documentation
+### Common issues
 
-### Additional Resources
-- [Next.js Documentation](https://nextjs.org/docs) - Framework reference
-- [Express.js Documentation](https://expressjs.com/) - API framework reference
-- [MongoDB Documentation](https://docs.mongodb.com/) - Database reference
-- [Firebase Documentation](https://firebase.google.com/docs) - Authentication reference
+- **Firebase login fails**: verify frontend env variables and Firebase configuration.
+- **Backend cannot connect to MongoDB**: confirm `MONGO_URI` and network access.
+- **Image upload errors**: verify Cloudinary credentials.
+- **CORS or auth errors**: ensure `Authorization` header is sent from the frontend.
 
-## �📄 License
+## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Support
-
-For support or questions, please open an issue on GitHub or contact the development team.
-
----
-
-**Built with ❤️ for fashion retail operations**
+This project is open source. Customize the license details in `package.json` as needed.

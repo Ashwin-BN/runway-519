@@ -1,115 +1,100 @@
-# Runway Inventory - Frontend Client
+﻿# Runway Inventory Frontend
 
-The frontend client for the Runway Inventory Management System, built with Next.js 16 and modern React patterns.
+The frontend application for the Runway Inventory Management System. Built with Next.js, Tailwind CSS, and Firebase Authentication.
 
-## 🚀 Quick Start
+## Overview
 
-### Prerequisites
-- Node.js 18+
-- npm or yarn
+The client provides a responsive inventory interface with:
 
-### Installation
+- Login and protected pages
+- Item creation with image upload
+- Search and filter inventory
+- Modern modal item details
+- Role-aware actions for admins and managers
+
+## Quick Start
+
+### Install
+
 ```bash
+cd client
 npm install
 ```
 
 ### Development
+
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-### Build for Production
+Open [http://localhost:3000](http://localhost:3000).
+
+### Build
+
 ```bash
 npm run build
 npm start
 ```
 
-## 🏗 Architecture
+## Environment
 
-### Tech Stack
-- **Next.js 16.2.3** - React framework with App Router
-- **TypeScript** - Type-safe JavaScript
-- **Tailwind CSS 4.0** - Utility-first CSS framework
-- **Firebase Auth** - Authentication and user management
-
-### Key Components
-
-#### Pages
-- `/` - Dashboard with navigation
-- `/login` - User authentication
-- `/search` - Inventory search interface
-- `/admin` - User management (admin only)
-
-#### Components
-- `AddItemForm` - Item creation with image upload
-- `SearchItems` - Advanced search and filtering
-
-### Features
-- 📱 Responsive design for mobile and desktop
-- 📷 Camera integration for image capture
-- 🔍 Real-time search with multiple filters
-- 👤 Role-based UI components
-- 🎨 Modern UI with Tailwind CSS
-
-## 🔧 Configuration
-
-### Environment Variables
-Create a `.env.local` file with:
+Create `client/.env.local` with:
 
 ```env
 NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
-NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789:web:abcdef123456
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=1234567890
+NEXT_PUBLIC_FIREBASE_APP_ID=1:1234567890:web:abcdef123456
+NEXT_PUBLIC_API_URL=http://localhost:5000
 ```
 
-## 📱 Mobile Support
+## Pages
 
-The application is optimized for mobile devices with:
-- Touch-friendly interface
-- Camera API integration
-- Responsive grid layouts
-- Mobile-first design approach
+- `/` — dashboard landing page
+- `/login` — authentication page
+- `/search` — inventory search and results
+- `/add-item` — add new item form
+- `/admin` — admin control panel
 
-## 🔗 API Integration
+## Components
 
-Communicates with the Express.js backend API:
-- Base URL: `http://localhost:5000`
-- Authentication: Firebase JWT tokens
-- Endpoints: Items CRUD, user management, search
+- `AddItemForm` — item creation form, including count and image upload
+- `ItemModal` — responsive item detail view with labels and quantity
+- `SearchItems` — inventory search UI with filters
+- `Navbar` — navigation and auth status
 
-## 🧪 Development
+## Important Notes
 
-### Available Scripts
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
+- `NEXT_PUBLIC_API_URL` should target the backend API.
+- Authentication is handled via Firebase; only authenticated users can interact with inventory routes.
+- Image upload uses multipart form data and the server routes defined in `server/routes/items.js`.
 
-### Code Style
-- ESLint configuration included
-- TypeScript for type safety
-- Component-based architecture
-- Custom hooks for state management
+## Scripts
 
-## 🚀 Deployment
+- `npm run dev` — run development server
+- `npm run build` — build for production
+- `npm start` — start production server
+- `npm run lint` — lint source files
 
-### Vercel (Recommended)
-1. Connect GitHub repository
-2. Set environment variables
-3. Automatic deployments on push
+## Deployment
 
-### Manual Deployment
-```bash
-npm run build
-npm start
-```
+For production deployment:
 
-## 📚 Related Documentation
+1. Build the app with `npm run build`
+2. Deploy to Vercel, Netlify, or a static host supporting Next.js
+3. Set environment variables in the hosting dashboard
+4. Confirm API URL points to the production backend
 
-- [Main Project README](../README.md) - Complete project documentation
-- [Backend API](../server/README.md) - Server-side documentation
-- [Next.js Documentation](https://nextjs.org/docs) - Framework reference
+## Local development workflow
+
+- Start the backend first
+- Then run the frontend
+- Keep `NEXT_PUBLIC_API_URL` pointed to the backend URL
+
+## Helpful Links
+
+- [Next.js docs](https://nextjs.org/docs)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [Firebase Auth](https://firebase.google.com/docs/auth)
