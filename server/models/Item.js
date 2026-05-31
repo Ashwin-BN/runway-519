@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const itemSchema = new mongoose.Schema({
   brand: { type: String, required: true },
   price: { type: Number, required: true },
+  count: { type: Number, default: 1, min: 1 },
 
   department: { type: String, required: true },   // 2-digit
   category: { type: String, required: true },     // 4-digit
