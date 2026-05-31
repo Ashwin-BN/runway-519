@@ -60,8 +60,11 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className="min-h-full bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 font-sans antialiased">
+        <a href="#main" className="sr-only focus:not-sr-only fixed left-4 top-4 z-50 rounded bg-blue-600 text-white px-3 py-2">Skip to content</a>
         <div className="min-h-screen flex flex-col">
-          {children}
+          <main id="main" className="flex-1">
+            {children}
+          </main>
         </div>
       </body>
     </html>
