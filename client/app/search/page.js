@@ -3,28 +3,14 @@
 
 
 import { useState, useEffect } from "react";
-
 import { useRouter } from "next/navigation";
-
-import { signOut } from "firebase/auth";
-
-import { auth } from "@/lib/firebase";
-
 import SearchItems from "@/app/components/SearchItems";
-
-import Navbar from "@/app/components/Navbar";
-
-import Navbar from "@/app/components/Navbar";
-
 import Navbar from "@/app/components/Navbar";
 import ItemModal from "@/app/components/ItemModal";
 
 
 export default function SearchPage() {
-
   const [role, setRole] = useState(null);
-
-  const [selectedItem, setSelectedItem] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
 

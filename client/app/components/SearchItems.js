@@ -5,11 +5,9 @@ import { createApiUrl, getAuthHeaders } from "@/lib/api";
 
 export default function SearchItems({
   onSearchComplete,
-  userRole,
 }) {
   const [filters, setFilters] = useState({
     department: "",
-    category: "",
     category: "",
     styleNumber: "",
     brand: "",
@@ -71,7 +69,6 @@ export default function SearchItems({
         const data = await res.json();
 
         setItems(data);
-        onSearchComplete?.(data);
         onSearchComplete?.(data);
       } else {
         alert("Error searching items");
@@ -282,7 +279,6 @@ export default function SearchItems({
                   </>
                 )}
               </button>
-            </div>
             </div>
           </div>
         </div>
