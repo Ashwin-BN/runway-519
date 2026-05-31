@@ -18,13 +18,16 @@ if (process.env.FIREBASE_ADMIN_CREDENTIALS) {
     const raw = fs.readFileSync("./firebase-admin.json", "utf8");
     serviceAccount = JSON.parse(raw);
   } catch (err) {
-    console.error("Firebase service account not found. Set FIREBASE_ADMIN_CREDENTIALS env var or provide firebase-admin.json file.");
-    throw err;
+    console.warn("Firebase service account file not found. Using default Firebase initialization.");
+    // Use default Firebase initialization without service account
+    admin.initializeApp();
   }
 }
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+if (serviceAccount) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 
 export default admin;
