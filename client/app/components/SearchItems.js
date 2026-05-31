@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { createApiUrl, getAuthHeaders } from "@/lib/api";
 
 export default function SearchItems({
   onSearchComplete,
   userRole,
-  onItemClick,
 }) {
   const [filters, setFilters] = useState({
     department: "",
+    category: "",
     category: "",
     styleNumber: "",
     brand: "",
@@ -16,6 +17,7 @@ export default function SearchItems({
     priceMax: "",
     markdown: false,
   });
+
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -59,11 +61,9 @@ export default function SearchItems({
       });
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/items?${queryParams.toString()}`,
+        `${createApiUrl("/items")}?${queryParams.toString()}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: getAuthHeaders(token),
         }
       );
 
@@ -71,6 +71,7 @@ export default function SearchItems({
         const data = await res.json();
 
         setItems(data);
+        onSearchComplete?.(data);
         onSearchComplete?.(data);
       } else {
         alert("Error searching items");
@@ -112,6 +113,7 @@ export default function SearchItems({
                     Department
                   </label>
 
+
                   <input
                     type="text"
                     name="department"
@@ -137,10 +139,12 @@ export default function SearchItems({
                   />
                 </div>
 
+
                 <div>
                   <label className="block text-base font-medium text-slate-700 dark:text-slate-300 mb-3">
                     Style Number
                   </label>
+
 
                   <input
                     type="text"
@@ -152,10 +156,12 @@ export default function SearchItems({
                   />
                 </div>
 
+
                 <div>
                   <label className="block text-base font-medium text-slate-700 dark:text-slate-300 mb-3">
                     Brand
                   </label>
+
 
                   <input
                     type="text"
@@ -167,10 +173,12 @@ export default function SearchItems({
                   />
                 </div>
 
+
                 <div>
                   <label className="block text-base font-medium text-slate-700 dark:text-slate-300 mb-3">
                     Min Price
                   </label>
+
 
                   <input
                     type="number"
@@ -183,10 +191,12 @@ export default function SearchItems({
                   />
                 </div>
 
+
                 <div>
                   <label className="block text-base font-medium text-slate-700 dark:text-slate-300 mb-3">
                     Max Price
                   </label>
+
 
                   <input
                     type="number"
@@ -197,6 +207,7 @@ export default function SearchItems({
                     className="w-full px-5 py-4 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-slate-100 text-base transition-all duration-200"
                   />
                 </div>
+
 
                 <div className="flex items-end">
                   <label className="flex items-center">
@@ -247,6 +258,7 @@ export default function SearchItems({
                       ></path>
                     </svg>
 
+
                     Searching...
                   </>
                 ) : (
@@ -265,10 +277,12 @@ export default function SearchItems({
                       />
                     </svg>
 
+
                     Search Items
                   </>
                 )}
               </button>
+            </div>
             </div>
           </div>
         </div>
@@ -337,16 +351,13 @@ export default function SearchItems({
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {items.map((item) => (
-                      <button
+                      <div
                         key={item._id}
-                        type="button"
-                        onClick={() => onItemClick?.(item)}
-                        className="text-left bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md border border-slate-100 dark:border-slate-700 transition-transform transform hover:-translate-y-1"
-                        aria-label={`Open ${item.styleNumber || 'item details'}`}
+                        className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md border border-slate-100 dark:border-slate-700 transition-all duration-200 cursor-pointer"
                       >
                         <div className="flex items-center space-x-6">
                           {item.imageUrl ? (
-                            <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-700 flex-shrink-0">
+                            <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-700">
                               <img
                                 src={item.imageUrl}
                                 alt={item.styleNumber || "Item"}
@@ -365,7 +376,7 @@ export default function SearchItems({
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
                                   strokeWidth={1}
-                                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5"
+                                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m8-5v2m0 0v2m0-2h2m-2 0h-2"
                                 />
                               </svg>
                             </div>
@@ -374,18 +385,18 @@ export default function SearchItems({
                           <div className="flex-1">
                             <div className="flex items-start justify-between mb-2">
                               <h4 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                                {item.styleNumber || item.brand || 'N/A'}
+                                {item.styleNumber || "N/A"}
                               </h4>
 
-                              <div className="flex items-center gap-2 text-right">
+                              <div className="flex items-center gap-2">
                                 {item.status === "sold" && (
-                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400">
+                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-700">
                                     Sold
                                   </span>
                                 )}
 
                                 {item.markdownPrice && (
-                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400">
+                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-700">
                                     Sale
                                   </span>
                                 )}
@@ -394,20 +405,24 @@ export default function SearchItems({
 
                             <div className="space-y-2">
                               <p className="text-base text-slate-600 dark:text-slate-400">
-                                {item.department && `Department: ${item.department}`}
+                                {item.department &&
+                                  `Department: ${item.department}`}
                               </p>
 
                               <p className="text-base text-slate-600 dark:text-slate-400">
-                                {item.brand && `Brand: ${item.brand}`}
+                                {item.brand &&
+                                  `Brand: ${item.brand}`}
                               </p>
 
                               <p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                                {item.price ? `$${item.price.toFixed(2)}` : "N/A"}
+                                {item.price
+                                  ? `$${item.price.toFixed(2)}`
+                                  : "N/A"}
                               </p>
                             </div>
                           </div>
                         </div>
-                      </button>
+                      </div>
                     ))}
                   </div>
                 )}
