@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import Navbar from "@/app/components/Navbar";
 
 export default function AdminPage() {
   const [users, setUsers] = useState([]);
@@ -16,7 +15,7 @@ export default function AdminPage() {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/admin/users", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -55,13 +54,7 @@ export default function AdminPage() {
     fetchUsers();
   }, [router, fetchUsers]);
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    router.push("/login");
-  };
-
+  
   const updateUserRole = async (userId, newRole) => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -69,7 +62,7 @@ export default function AdminPage() {
     console.log("Updating user role - ID:", userId, "NewRole:", newRole);
 
     try {
-      const res = await fetch(`http://localhost:5000/admin/users/${userId}/role`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/role`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -98,44 +91,21 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      {/* Header */}
-      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
-                Admin Dashboard
-              </h1>
-              <span className="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400">
-                Admin Access
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => router.push("/")}
-                className="inline-flex items-center px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors duration-200"
-              >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Back to Dashboard
-              </button>
-              <button
-                onClick={handleLogout}
-                className="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
-              >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
+      <Navbar currentPage="admin" />
+      
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+              Admin Dashboard
+            </h1>
+            <span className="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400">
+              Admin Access
+            </span>
+          </div>
+        </div>
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
             User Management
