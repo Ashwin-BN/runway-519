@@ -1,186 +1,165 @@
-# Runway Inventory - Backend API
+﻿# Runway Inventory Backend
 
-The backend API server for the Runway Inventory Management System, built with Express.js and MongoDB.
+This backend API powers the Runway Inventory Management System. It is built with Express, MongoDB, Mongoose, Firebase Admin, Cloudinary, and Multer.
 
-## 🚀 Quick Start
+## Overview
 
-### Prerequisites
-- Node.js 18+
-- MongoDB Atlas account
-- Firebase project
-- Cloudinary account
+The server exposes REST endpoints for:
 
-### Installation
+- User authentication verification
+- Item creation and search
+- Item status updates
+- Markdown pricing
+- Admin user role management
+
+## Quick Start
+
+### Install
+
 ```bash
+cd server
 npm install
 ```
 
-### Environment Setup
-Create a `.env` file with required environment variables (see main README).
+### Start
 
-### Development
 ```bash
-node index.js
-```
-Server runs on `http://localhost:5000`
-
-## 🏗 Architecture
-
-### Tech Stack
-- **Node.js** - JavaScript runtime
-- **Express.js 5.2.1** - Web framework
-- **MongoDB + Mongoose** - Database and ODM
-- **Firebase Admin SDK** - Authentication
-- **Cloudinary** - Image storage
-- **Multer** - File upload handling
-
-### Key Features
-- 🔐 JWT-based authentication with Firebase
-- 📊 RESTful API design
-- 🖼️ Multi-image upload with Cloudinary
-- 👥 Role-based access control
-- 🔍 Advanced search with regex filtering
-
-## 📚 API Endpoints
-
-### Authentication Routes (`/auth`)
-```
-POST /auth/register  - Register new user
-POST /auth/login     - User login
-GET  /auth/verify    - Verify JWT token
+npm start
 ```
 
-### Item Routes (`/items`)
-```
-GET  /items          - Get items with filtering
-POST /items          - Create new item (multipart/form-data)
-PUT  /items/:id/sold - Mark item as sold
-PUT  /items/:id/markdown - Set markdown price (admin)
-```
+The backend listens on `http://localhost:5000` by default.
 
-### Admin Routes (`/admin`)
-```
-GET  /admin/users          - Get all users
-PUT  /admin/users/:id/role - Update user role
-```
+## Environment
 
-## 🔍 Search Parameters
+Create `server/.env` with the required credentials:
 
-The `/items` GET endpoint supports advanced filtering:
-
-- `brand` - Case-insensitive regex search
-- `styleNumber` - Case-insensitive regex search
-- `department` - Exact department match
-- `priceMin` - Minimum price filter
-- `priceMax` - Maximum price filter
-- `markdown` - "true" for markdown items only
-- `limit` - Result limit
-
-Example: `GET /items?brand=nike&priceMin=50&priceMax=200`
-
-## 🗄 Data Models
-
-### Item Schema
-```javascript
-{
-  brand: String,           // Required
-  price: Number,           // Required
-  department: String,      // Required (2-digit)
-  category: String,        // Required (4-digit)
-  styleNumber: String,     // Required (6-digit)
-  imageUrl: String,        // Primary image
-  imageUrls: [String],     // Multiple images
-  status: String,          // 'available' | 'sold'
-  markdownPrice: Number,   // Optional
-  createdAt: Date
-}
+```env
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/runway_inventory?retryWrites=true&w=majority
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY\n-----END PRIVATE KEY-----\n"
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your-project.iam.gserviceaccount.com
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-cloudinary-api-key
+CLOUDINARY_API_SECRET=your-cloudinary-api-secret
+JWT_SECRET=your-jwt-secret
 ```
 
-### User Schema
-```javascript
-{
-  email: String,           // Required, unique
-  role: String,            // 'user' | 'admin'
-  createdAt: Date
-}
-```
+## Available Scripts
 
-## 🔐 Authentication
+- `npm start` — start the server
+- `npm test` — placeholder test script
 
-Uses Firebase Admin SDK for token verification:
-- Validates JWT tokens from frontend
-- Extracts user information and roles
-- Protects routes with middleware
+## API Endpoints
 
-## 📸 Image Upload
+### Authentication
+- `POST /auth/register`
+- `POST /auth/login`
+- `GET /auth/verify`
 
-- **Multer**: Handles multipart/form-data
-- **Cloudinary**: Stores and optimizes images
-- **Multiple Images**: Support for up to 2 images per item
-- **URL Storage**: Secure URLs stored in database
+### Item routes
+- `GET /items`
+- `POST /items`
+- `PUT /items/:id/sold`
+- `PUT /items/:id/markdown`
 
-## 🛠 Development
+### Admin routes
+- `GET /admin/users`
+- `PUT /admin/users/:id/role`
 
-### Available Scripts
-- `node index.js` - Start development server
-- `npm test` - Run tests (when implemented)
+## Request Details
 
-### Middleware
-- `auth.js` - JWT verification
-- `admin.js` - Admin role checking
+### `POST /items`
 
-### File Structure
+Accepts `multipart/form-data` with fields:
+- `brand`
+- `price`
+- `count`
+- `department`
+- `category`
+- `styleNumber`
+- `images` (up to 2 files)
+
+### `GET /items`
+
+Supports query parameters:
+- `brand`
+- `styleNumber`
+- `department`
+- `priceMin`
+- `priceMax`
+- `markdown=true`
+- `limit`
+
+## Data Models
+
+### Item schema
+
+- `brand` — required string
+- `price` — required number
+- `count` — number, default `1`
+- `department` — required 2-digit string
+- `category` — required 4-digit string
+- `styleNumber` — required 6-digit string
+- `imageUrl` — string
+- `imageUrls` — array of strings
+- `status` — `available` or `sold`
+- `markdownPrice` — optional number
+- `createdAt` — timestamp
+
+### User schema
+
+- `email` — string
+- `role` — `user`, `management`, or `admin`
+- `createdAt` — timestamp
+
+## Authentication
+
+The backend verifies Firebase ID tokens on protected routes using `verifyUser` middleware. Admin-only routes also use `isManagementOrAdmin` middleware.
+
+## Upload Handling
+
+- `Multer` processes uploaded image files
+- Cloudinary uploads images and returns secure URLs
+- Temporary local files are stored in `server/uploads/`
+
+## Deployment Notes
+
+- Use environment variables for MongoDB, Firebase, and Cloudinary credentials
+- Deploy with a process manager like `pm2` or a container platform
+- Configure HTTPS and domain-specific API URL
+- Keep service account JSON and sensitive keys private
+
+## Project Layout
+
 ```
 server/
 ├── config/
-│   └── cloudinary.js      # Image service config
+│   └── cloudinary.js
 ├── middleware/
-│   ├── auth.js           # Authentication
-│   └── admin.js          # Admin authorization
+│   ├── admin.js
+│   └── auth.js
 ├── models/
-│   ├── Item.js           # Item schema
-│   └── User.js           # User schema
+│   └── Item.js
 ├── routes/
-│   ├── auth.js           # Auth endpoints
-│   ├── admin.js          # Admin endpoints
-│   └── items.js          # Item CRUD
-├── uploads/              # Temp file storage
-├── index.js              # Server entry
+│   ├── admin.js
+│   ├── auth.js
+│   └── items.js
+├── uploads/
+├── firebase-admin.json
+├── index.js
 └── package.json
 ```
 
-## 🚀 Deployment
+## Best Practices
 
-### Production Considerations
-- Set `NODE_ENV=production`
-- Use PM2 for process management
-- Configure reverse proxy (nginx)
-- Set up SSL certificates
-- Monitor logs and performance
+- Validate all required fields before creating items
+- Sanitize user input and trim strings
+- Protect sensitive routes with Firebase token verification
+- Log errors for production monitoring
 
-### Environment Variables
-See main project README for complete list of required environment variables.
+## Related Documentation
 
-## 🧪 Testing
-
-### Manual Testing
-- Use tools like Postman or Insomnia
-- Test all CRUD operations
-- Verify authentication flows
-- Check file upload functionality
-
-### API Testing Checklist
-- [ ] User registration/login
-- [ ] JWT token validation
-- [ ] Item creation with images
-- [ ] Search filtering
-- [ ] Admin operations
-- [ ] Error handling
-
-## 📚 Related Documentation
-
-- [Main Project README](../README.md) - Complete project overview
-- [Frontend Client](../client/README.md) - Client-side documentation
-- [Express.js Documentation](https://expressjs.com/) - Framework reference
-- [Mongoose Documentation](https://mongoosejs.com/) - ODM reference</content>
-<parameter name="filePath">c:\CPP\Job\runway-519\server\README.md
+- [Main project README](../README.md)
+- [Firebase Admin SDK docs](https://firebase.google.com/docs/admin/setup)
+- [Express documentation](https://expressjs.com/)
+- [Mongoose documentation](https://mongoosejs.com/)
