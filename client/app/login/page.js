@@ -1,6 +1,6 @@
 "use client";
 
-import { signInWithPopup } from "firebase/auth";
+import { signInWithRedirect, getRedirectResult } from "firebase/auth";
 import { auth, provider } from "@/lib/firebase";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -10,27 +10,7 @@ export default function LoginPage() {
 
   const login = async () => {
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      const token = await user.getIdToken();
-
-      localStorage.setItem("token", token);
-
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const user = await response.json();
-        localStorage.setItem("role", user.role);
-        router.push("/");
-      } else {
-        alert("Backend login failed");
-      }
+      await signInWithRedirect(auth, provider);
     } catch (error) {
       console.error("Login failed", error);
       alert("Login failed: " + error.message);
@@ -39,11 +19,14 @@ export default function LoginPage() {
 
   useEffect(() => {
     const checkUser = async () => {
-      if (auth.currentUser) {
-        const token = await auth.currentUser.getIdToken();
-        localStorage.setItem("token", token);
-        const storedRole = localStorage.getItem("role");
-        if (!storedRole) {
+      try {
+        const result = await getRedirectResult(auth, provider);
+        if (result) {
+          const user = result.user;
+          const token = await user.getIdToken();
+
+          localStorage.setItem("token", token);
+
           const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
             method: "POST",
             headers: {
@@ -51,12 +34,35 @@ export default function LoginPage() {
               Authorization: `Bearer ${token}`,
             },
           });
+
           if (response.ok) {
             const user = await response.json();
             localStorage.setItem("role", user.role);
+            router.push("/");
+          } else {
+            alert("Backend login failed");
           }
+        } else if (auth.currentUser) {
+          const token = await auth.currentUser.getIdToken();
+          localStorage.setItem("token", token);
+          const storedRole = localStorage.getItem("role");
+          if (!storedRole) {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            if (response.ok) {
+              const user = await response.json();
+              localStorage.setItem("role", user.role);
+            }
+          }
+          router.push("/");
         }
-        router.push("/");
+      } catch (error) {
+        console.error("Redirect result error:", error);
       }
     };
     checkUser();
