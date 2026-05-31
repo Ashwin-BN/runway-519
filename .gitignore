@@ -1,5 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
+server/firebase-admin.json
+server/.env
 # dependencies
 client/.next
 server/node_modules
@@ -28,6 +29,9 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+
+# uploads
+server/uploads
 
 # vercel
 .vercel
