@@ -19,15 +19,17 @@ if (process.env.FIREBASE_ADMIN_CREDENTIALS) {
     serviceAccount = JSON.parse(raw);
   } catch (err) {
     console.warn("Firebase service account file not found. Using default Firebase initialization.");
-    // Use default Firebase initialization without service account
-    admin.initializeApp();
   }
 }
 
+// Initialize Firebase Admin SDK only once
 if (serviceAccount) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
+} else {
+  // Use default Firebase initialization without service account
+  admin.initializeApp();
 }
 
 export default admin;
