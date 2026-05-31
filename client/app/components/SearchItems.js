@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { createApiUrl, getAuthHeaders } from "@/lib/api";
 
 export default function SearchItems({
   onSearchComplete,
@@ -59,9 +58,12 @@ export default function SearchItems({
       });
 
       const res = await fetch(
-        `${createApiUrl("/items")}?${queryParams.toString()}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/items?${queryParams.toString()}`,
         {
-          headers: getAuthHeaders(token),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 

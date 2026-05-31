@@ -3,12 +3,8 @@
 
 
 import { useState, useEffect, useCallback } from "react";
-
 import { useRouter } from "next/navigation";
-
 import Navbar from "@/app/components/Navbar";
-
-import { createApiUrl, getAuthHeaders } from "@/lib/api";
 
 
 
@@ -34,10 +30,11 @@ export default function AdminPage() {
 
     try {
 
-      const res = await fetch(createApiUrl("/admin/users"), {
-
-        headers: getAuthHeaders(token),
-
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
 
@@ -120,12 +117,12 @@ export default function AdminPage() {
 
     try {
 
-      const res = await fetch(createApiUrl(`/admin/users/${userId}/role`), {
-
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/role`, {
         method: "PUT",
-
-        headers: getAuthHeaders(token),
-
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ role: newRole }),
 
       });

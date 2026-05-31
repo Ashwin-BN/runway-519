@@ -3,14 +3,9 @@
 
 
 import { signInWithPopup } from "firebase/auth";
-
 import { auth, provider } from "@/lib/firebase";
-
 import { useEffect } from "react";
-
 import { useRouter } from "next/navigation";
-
-import { createApiUrl, getAuthHeaders } from "@/lib/api";
 
 
 
@@ -36,12 +31,12 @@ export default function LoginPage() {
 
 
 
-      const response = await fetch(createApiUrl("/auth/login"), {
-
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: "POST",
-
-        headers: getAuthHeaders(token),
-
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
 
@@ -86,12 +81,12 @@ export default function LoginPage() {
 
         if (!storedRole) {
 
-          const response = await fetch(createApiUrl("/auth/login"), {
-
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
             method: "POST",
-
-            headers: getAuthHeaders(token),
-
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
           });
 
           if (response.ok) {
