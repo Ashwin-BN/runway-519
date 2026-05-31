@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { auth } from "@/lib/firebase";
 
-export default function SearchItems() {
+export default function SearchItems({ onItemClick }) {
   const [filters, setFilters] = useState({
     department: "",
     category: "",
@@ -26,7 +26,7 @@ export default function SearchItems() {
     setLoading(true);
     const query = new URLSearchParams(filters).toString();
     try {
-      const res = await fetch(`http://localhost:5000/items?${query}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/items?${query}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -91,23 +91,51 @@ export default function SearchItems() {
           {loading ? "Searching..." : "Search"}
         </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((item) => (
-          <div key={item._id} className="border p-4 rounded">
-            {item.imageUrl && (
-              <img src={item.imageUrl} alt={item.brand} width={100} className="mb-2" />
-            )}
-            <p><strong>Brand:</strong> {item.brand}</p>
-            <p><strong>Price:</strong> ${item.price}</p>
-            <p><strong>Department:</strong> {item.department}</p>
-            <p><strong>Category:</strong> {item.category}</p>
-            <p><strong>Style:</strong> {item.styleNumber}</p>
-            <p><strong>Barcode:</strong> {item.barcode}</p>
-            <p><strong>Status:</strong> {item.status}</p>
-          </div>
+          <button
+            key={item._id}
+            type="button"
+            onClick={() => onItemClick?.(item)}
+            className="text-left bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm hover:shadow-md border border-slate-100 dark:border-slate-700 transition-transform transform hover:-translate-y-1"
+            aria-label={`View item ${item.styleNumber || item.brand}`}
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-20 h-20 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-700 flex-shrink-0">
+                {item.imageUrl ? (
+                  <img src={item.imageUrl} alt={item.brand} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-400">
+                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex-1">
+                <div className="flex items-start justify-between">
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    {item.styleNumber || item.brand}
+                  </h3>
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-slate-900 dark:text-slate-100">${item.price?.toFixed?.(2) || 'N/A'}</p>
+                    {item.markdownPrice && <p className="text-sm text-red-600">Sale ${item.markdownPrice}</p>}
+                  </div>
+                </div>
+
+                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{item.brand}</p>
+                <div className="mt-3 flex items-center gap-2">
+                  <span className={`inline-flex items-center px-2 py-0.5 text-xs rounded-full ${item.status === 'sold' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                    {item.status}
+                  </span>
+                  <span className="text-xs text-slate-500">Dept {item.department}</span>
+                </div>
+              </div>
+            </div>
+          </button>
         ))}
       </div>
     </div>
   );
-}</content>
-<parameter name="filePath">c:\CPP\Job\runway-519\client\components\SearchItems.js
+}
