@@ -31,26 +31,10 @@ export default function LoginPage() {
 
   const login = async () => {
     try {
-      const result = await signInWithPopup(auth, provider);
-      await handleAuthSuccess(result.user);
+      await signInWithRedirect(auth, provider);
     } catch (error) {
-      console.error("Login failed", error);
-
-      if (
-        error.code === "auth/popup-blocked" ||
-        error.code === "auth/cancelled-popup-request" ||
-        error.code === "auth/operation-not-supported-in-this-environment"
-      ) {
-        try {
-          await signInWithRedirect(auth, provider);
-        } catch (redirectError) {
-          console.error("Redirect login failed", redirectError);
-          alert("Login failed. Please allow popups or try again.");
-        }
-        return;
-      }
-
-      alert("Login failed: " + error.message);
+      console.error("Login redirect failed", error.code, error.message);
+      alert("Login failed. Please allow redirects and try again.");
     }
   };
 
