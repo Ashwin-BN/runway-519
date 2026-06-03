@@ -4,6 +4,7 @@ import { useState } from "react";
 
 export default function SearchItems({
   onSearchComplete,
+  onItemClick,
 }) {
   const [filters, setFilters] = useState({
     department: "",
@@ -351,6 +352,7 @@ export default function SearchItems({
                     {items.map((item) => (
                       <div
                         key={item._id}
+                        onClick={() => onItemClick?.(item)}
                         className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md border border-slate-100 dark:border-slate-700 transition-all duration-200 cursor-pointer"
                       >
                         <div className="flex items-center space-x-6">
