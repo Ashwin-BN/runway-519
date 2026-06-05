@@ -1,7 +1,7 @@
 ﻿"use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth";
+import { signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { auth, provider } from "@/lib/firebase";
 
 export default function LoginPage() {
@@ -61,6 +61,7 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
+    let unsub = null;
     const checkUser = async () => {
       try {
         // Check for redirect result (user coming back from Google auth)
@@ -74,7 +75,24 @@ export default function LoginPage() {
         console.error("Redirect result error:", redirectError);
       }
 
-      // Check if user is already logged in
+      // Fallback: observe auth state changes (useful when redirect flow finishes)
+      try {
+        unsub = onAuthStateChanged(auth, async (user) => {
+          console.log("onAuthStateChanged -> user:", user);
+          if (user) {
+            try {
+              await handleAuthSuccess(user);
+              if (unsub) unsub();
+            } catch (e) {
+              console.error("handleAuthSuccess (onAuthStateChanged) error:", e);
+            }
+          }
+        });
+      } catch (obsErr) {
+        console.error("Auth state observer error:", obsErr);
+      }
+
+      // Check if user is already logged in (synchronous check)
       if (auth.currentUser) {
         console.log("User already logged in, checking role...");
         try {
@@ -105,6 +123,10 @@ export default function LoginPage() {
     };
 
     checkUser();
+
+    return () => {
+      if (unsub) unsub();
+    };
   }, [router]);
 
   return (
