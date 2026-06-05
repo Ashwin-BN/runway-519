@@ -25,7 +25,9 @@ export default function LoginPage() {
         localStorage.setItem("role", data.role);
         router.push("/");
       } else {
-        alert("Backend login failed");
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Backend login failed:", errorData);
+        alert("Backend login failed: " + (errorData.error || response.statusText));
       }
     } catch (error) {
       console.error("handleAuthSuccess error:", error);
