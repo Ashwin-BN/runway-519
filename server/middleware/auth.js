@@ -21,6 +21,7 @@ export const verifyUser = async (req, res, next) => {
 
     next();
   } catch (err) {
+    console.error("verifyUser error:", err && err.message ? err.message : err);
     return res.status(401).json({ error: "Unauthorized" });
   }
 };
